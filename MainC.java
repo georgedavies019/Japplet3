@@ -25,7 +25,7 @@ public class MainC extends Applet implements Runnable {
       x = 0;
 	   y = 1;
       
-      ball1 = new Ball(0,0);
+      ball1 = new Ball(0,0, height, width);
      
    }
 
@@ -80,7 +80,7 @@ public class MainC extends Applet implements Runnable {
             update();
             repaint();
             
-            t.sleep( 10 );  
+            t.sleep( 50 );  
          }
       }
       catch (InterruptedException e) { }
