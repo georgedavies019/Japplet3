@@ -1,14 +1,13 @@
 package Japplet3;
+import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
-import java.util.Vector;
-import java.lang.Math;
+
 import java.util.Random;
 
 public class Ball implements Runnable{
 
 	
-private static final Object[] Vector = null;
+
 int cs;
 protected int x;
 protected int y;
@@ -16,10 +15,9 @@ Thread t;
 private int xInc;
 private int yInc;
 
-
 private int height, width;
 private int radius;
-
+Color randColour;
 
 
 MainC master;
@@ -35,13 +33,25 @@ MainC master;
 		
 		width = master.getWidth();
 		height = master.getHeight();
-		radius = (rand.nextInt(30)+20);
+		radius = (rand.nextInt(40)+10);
 		
 		yInc = (rand.nextInt(6)-3);
 		xInc = (rand.nextInt(6)-3);
 		
 		
+		float r = rand.nextFloat();
+		float g = rand.nextFloat();
+		float b = rand.nextFloat();
 		
+		randColour = new Color(r, g, b);
+		
+		if (xInc == 0){
+			xInc++;
+		}
+		
+		if (yInc == 0){
+			yInc++;
+		}
 	}
 	
 	
@@ -55,11 +65,11 @@ MainC master;
 	
 	
 	public int getX(){
-		return x;
+		return x + radius;
 	}
 	
 	public int getY(){
-		return y;
+		return y + radius;
 	}
 	
 	public void setXInc(int xTemp){
@@ -101,11 +111,15 @@ MainC master;
 	
 	public void draw(Graphics g){
 		boolean collision;
-		g.drawOval(x, y, radius, radius);
+		
+		
+		g.setColor(randColour);
+		
+		g.fillOval(x, y, radius*2, radius*2);
 		collision = g.hitClip(x, y, height, width);
 		if (!collision){
-			this.setX(0);
-			this.setY(0);
+			this.setX(40);
+			this.setY(40);
 		}
 		
 		
@@ -115,16 +129,45 @@ MainC master;
 
 	public void run() {
 		
-		
+		while(true){
 		
 		try {
+			//System.out.println("das shit");
+			Thread.sleep(150);
 			
-			Thread.sleep(500);
+			if (this.getX()<=20){
+				Thread.sleep(500);
+				if (this.getX()<=20){
+					this.setX(this.getX() + (2 * radius + 20));
+					Thread.sleep(500);
+				}						
+			}else if (this.getX()>=width - 20){
+				Thread.sleep(500);
+				if (this.getX()>=width -20){
+					this.setX(this.getX() - (2 * radius + 20));
+					Thread.sleep(500);
+				}
+			}else if (this.getY()<=20){
+				Thread.sleep(500);
+					if (this.getY()<=20){
+					this.setY(this.getY() + (2 * radius + 20));
+					Thread.sleep(500);
+				}
+			}else if (this.getY()>=height - 20){
+				Thread.sleep(500);
+				if (this.getY()>=height -20){
+					
+					this.setY(this.getY() - (2 * radius + 20));
+					Thread.sleep(500);
+				}
+			}
+			
+			
 			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+		}
 		
 	}
 	
@@ -132,15 +175,15 @@ MainC master;
 	
 	public void checkCollision(){	
 		
-		
+		//System.out.println(height);
 			
-			if (getX() < 0){			//collided with left wall
+			if (getX() < 0 + radius){			//collided with left wall
 				setXInc(-(getXInc()));
-			}else if (getX() > width - radius){	//collided with the right
+			}else if (getX() > width - radius ){	//collided with the right
 				setXInc(-(getXInc()));
-			}else if (getY() < 0){		//collided with top
+			}else if (getY() < 0 + radius){		//collided with top
 				setYInc(-(getYInc()));
-			}else if (getY() > height - radius){	//COLLIDED WITH BOTTOM
+			}else if (getY()  > height - radius ){	//COLLIDED WITH BOTTOM
 				setYInc(-(getYInc()));
 			}
 					
@@ -154,32 +197,11 @@ MainC master;
 	
 	
 	
-	public void ballBounce(Ball k){
-		//int yTemp;
-		//int xTemp;
+	
 		
 		
 		
-		/*int psi =(int) (180 - (this.getAngle()+k.getAngle())/2);
-		
-		double cartesian = Math.pow(x, 2) + Math.pow(y, 2);
-		yTemp = (int) (Math.sin(psi)*Math.sqrt(cartesian));
-		xTemp = (int) Math.sqrt(cartesian - Math.pow(y , 2));
-		y = (yTemp - yInc);
-		xInc = (xTemp - xInc);
-		
-		*/
-		
-		k.setXInc(-k.getXInc());
-		k.setXInc(-k.getXInc());
-		
-		
-		this.setXInc(-this.getXInc());
-		this.setYInc(-this.getYInc());
-		
-		
-		
-	}
+	
 
 }	
 	

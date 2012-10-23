@@ -2,9 +2,9 @@ package Japplet3;
 import java.applet.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
 
-public class MainC extends Applet implements Runnable,MouseListener {
+
+public class MainC extends Applet implements Runnable,MouseListener, KeyListener {
 
    /**
 	 * Author: George Davies
@@ -13,52 +13,30 @@ public class MainC extends Applet implements Runnable,MouseListener {
 	int width, height;
   
 	Image buffer;
-   
+	int refresh = 10;
 	Thread t = null;
 	private int ballCount = 0;
-	private int max =10;
-	public Ball[] balls = new Ball[max];
+	private int max;
+	public Ball[] balls = new Ball[100];
 	Ball ball1;
 	BallCollision ballCollision;
-	public Vector[] coOrdArray = new  Vector[max];
+	private boolean adminMode = false;
+	
 
 	public void init() {
-		width = 800;
-		height = 600;
+		width = 900;
+		height = 900;
+		max = (height*width/36000);
 		setSize(height, width);
-      
 		ballCollision = new BallCollision(this);
 		buffer = createImage(width, height);
-      
 		setBackground( Color.black );
-         
 		addMouseListener( this );
-		
-		 
-		  
-		 
-	  
-	
+		addKeyListener(this);
 	}
 
-	public void mousePressed( MouseEvent e ){
 	
-		if (ballCount < max){
-			int mx = e.getX();
-			int my = e.getY();
-			spawnCircle(mx, my);
-	   }else{
-		   System.out.println("too many balls");
-	   }
-	}
    
-   
-   
-   
-	public void destroy() {
-		System.out.println("destroy()");
-	}
-
    
 	public void start() {
 		if ( t == null ) {
@@ -77,13 +55,17 @@ public class MainC extends Applet implements Runnable,MouseListener {
 		System.out.println("stop(): begin");
 	}
 
-   
+	public void destroy() {
+	}
+	
+	
+	
 	public void run() {
 		try {
 			while (true) {
 				update();
 				repaint();
-				Thread.sleep( 10 );  
+				Thread.sleep( refresh);  
 			}
 		}
       catch (InterruptedException e) { }
@@ -94,34 +76,30 @@ public class MainC extends Applet implements Runnable,MouseListener {
 	public void update(){
 		for(int i = 0; i < ballCount; i++){
 			balls[i].update();
-				
-			
 		}
 		ballCollision.ballCheck();
-		
-	   
 	}
    
-  
+	public void updateG (Graphics g){
+		g.drawImage(buffer, 0, 0, null);
+		g.dispose();
+	}
    
 	public void paint( Graphics g ) {
 		Graphics bg = buffer.getGraphics();
 	    //draw backgound
-		bg.setColor(Color.black);
+		bg.setColor(Color.red);
 		bg.fillRect(0, 0, getWidth(), getHeight());
 	    //draw border
 		bg.setColor( Color.green );
 		bg.drawRect(2, 2, width - 3, height - 3);
 		bg.setClip(0, 0, width, height);
-	   
-	   
-	   //System.out.println(ballCount);
 		for(int i = 0; i < ballCount; i++){
 			balls[i].draw(bg);
 		}
  	   
-		g.drawImage(buffer, 0, 0, null);
-		g.dispose();
+		updateG(g);
+		
 	
 	}
    
@@ -134,7 +112,7 @@ public class MainC extends Applet implements Runnable,MouseListener {
 		return ballCount;
 	}
    
-   
+ 
 	public int getHeight(){
 		return height;
 	}
@@ -143,36 +121,106 @@ public class MainC extends Applet implements Runnable,MouseListener {
 		return width;
 	}
    
-   
-	public void spawnCircle(int x, int y){
-		ball1 = new Ball(x,y, this);
-		balls[ballCount] = ball1;
-		ballCount++;  
-	}
-	
 	public int getRadius(int i){
 		return balls[i].getRadius();
 	}
 	
-	public void ballCrash(int i, int k){
+	
+	public void spawnCircle(int x, int y){
+		ball1 = new Ball(x,y, this);
+		if (ballCount < 2){
+			balls[ballCount] = ball1;
+			ballCount++; 
+		}
 		
-		balls[i].ballBounce(balls[k]);
+		
+		else if (ballCount >= 2){
+			if (!ballCollision.spawnCheck(x,y,ball1.getRadius())){
+				balls[ballCount] = ball1;
+				ballCount++; 
+		
+			}
+		}
 	}
+	
+	
+	
+	
+	public void mousePressed( MouseEvent e ){
+		if (ballCount < max){
+			int mx = e.getX();
+			int my = e.getY();
+			spawnCircle(mx, my);
+	   }else{
+		   System.out.println("too many balls");
+	   }
+	}
+	
+	
+	public void keyTyped( KeyEvent e ) {
+	      char c = e.getKeyChar();
+	      if ( c == 'r' ) {
+	    	  if (!adminMode){
+	    		  refresh++;
+	    		  System.out.println(refresh);
+	    	  }else if(adminMode){
+	    		  if (max < 100){
+	    			  max++;
+	    			  System.out.println("max balls:" + max);
+	    		  }
+	    	  }
+	      }else if  ( c == 'e' ) {
+	    	  if (refresh != 0){
+	    		  if (!adminMode){
+	    			  refresh--;
+	    			  System.out.println(refresh);
+	    		  }else if (adminMode){
+	    			  if (max > 1){
+	    				  max--;
+	    				  System.out.println("max balls:" + max);
+	    			  
+	    			  }
+	    		  }
+	    	  }
+	    }
+	}
+	
+	
+	
+	
 
 	public void mouseClicked(MouseEvent e) {
 	
-}
+	}
 
 	public void mouseReleased(MouseEvent e) {
 
-}
+	}
 
 	public void mouseEntered(MouseEvent e) {
 	
-}
+	}
 
 	public void mouseExited(MouseEvent e) {
 
-}
+	}
    
+	public void keyPressed(KeyEvent e) {
+	
+		char c = e.getKeyChar();
+		if (c == 'b'){
+			adminMode = true;
+		}
+		
+	}
+
+	
+	public void keyReleased(KeyEvent e) {
+		char c = e.getKeyChar();
+		if (c == 'b'){
+			adminMode = false;
+		}
+	}
+	
+	
 }

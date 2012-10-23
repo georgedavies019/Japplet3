@@ -1,88 +1,89 @@
 package Japplet3;
 
 import java.lang.Math;
-import java.util.Random;
 
 
 
 
 
 
-public class BallCollision  implements Runnable{
+
+public class BallCollision{
+	
 private int ballCount;
 MainC master;
-boolean ballCollisionEnabled;
-Thread t;
+
 
 	public BallCollision(MainC c) {
 		master = c;
-		t = new Thread( this );        
-		t.start();
+			
 	}
 	
 	public void ballCheck() {
-		ballCount = master.getBallCount() ;
-		
-		
-		
+		ballCount = master.getBallCount();		
 		for (int i = 0;i < ballCount; i++){
 			for (int k = i+1;k < ballCount; k++){
-				if (Math.sqrt( Math.pow(((master.getBallArray(i).getX()) - (master.getBallArray(k).getX())) ,2) +
-						Math.pow(((master.getBallArray(i).getY()) - (master.getBallArray(k).getY())) ,2)) <= 
-						(master.getBallArray(i).getRadius()+master.getBallArray(k).getRadius())
-						
-						
-					
-						
-						
-						)
-				
-					
-				
-				
+				int a = master.getBallArray(i).getX();
+				int b = master.getBallArray(k).getX();
+				int c = master.getBallArray(i).getY();
+				int d = master.getBallArray(k).getY();
+				if (Math.sqrt( (a - b)*(a - b) + (c - d)*(c - d)) <= 
+						(master.getBallArray(i).getRadius()+master.getBallArray(k).getRadius()))
+								
 				{
+				
+					int bTemp = master.getBallArray(i).getXInc();
+					int cTemp =	master.getBallArray(i).getYInc();
 					
-					if (ballCollisionEnabled){
-					Random rand = new Random();
-					int a=rand.nextInt(6)-3;
-					int b=rand.nextInt(6)-3;
+					master.getBallArray(i).setXInc(master.getBallArray(k).getXInc());
+					master.getBallArray(i).setYInc(master.getBallArray(k).getYInc());
+					master.getBallArray(k).setXInc(bTemp);
+					master.getBallArray(k).setYInc(cTemp);
 					
-					master.getBallArray(i).setXInc(a);
-					master.getBallArray(i).setXInc(b);
-					
-					
-					master.getBallArray(k).setXInc(-a);
-					master.getBallArray(k).setYInc(-b);
-					}
 										
 				}
 				else{
 					//System.out.println("lulz cant catch me!");
 				}
-				
 			}
 		}
-		
-		
-		
-		
 	}
 
-	@Override
-	public void run() {
-		while (true){
-		try {
-			ballCollisionEnabled = true;
-			Thread.sleep(100);
-			ballCollisionEnabled = false;
-			Thread.sleep(200);
-			System.out.println("fdsfffhh55");
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+	
+	public boolean spawnCheck(int x, int y, int r){
+		ballCount = master.getBallCount();
+		
+		
+		
+		
+		for (int t = 0;t < ballCount; t++){
+		int a2 = master.getBallArray(t).getX();
+		int b2 = master.getBallArray(t).getY();
+
+
+		if (Math.sqrt( (a2 - x)*(a2 - x) + (b2 - y)*(b2 - y)) <= 
+				(master.getBallArray(t).getRadius()+r+30))
+				
+		{
+			System.out.println("collide");
+	
+			return true;
+
+}	
+		
+		
 		}
 		
-	}
-	}
-	
+		System.out.println(" no collide");
+		return false;
+	}	
 }
+
+
+
+
+
+
+
+
