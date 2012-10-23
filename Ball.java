@@ -1,134 +1,209 @@
 package Japplet3;
+import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
-import java.util.Vector;
-import java.lang.Math;
 
-public class Ball {
+import java.util.Random;
+
+public class Ball implements Runnable{
 
 	
+
 int cs;
-int x;
-int y;
-boolean collision;
-Vector coOrdinates;
-int xinc;
-int yinc;
-Point point1;
-Point point2;
-double angle;
-double x1;
-double x2;
-double y1;
-double y2;
-int dx;
-int dy;
-int height;
-int width;
-Point lastE ;
+protected int x;
+protected int y;
+Thread t;
+private int xInc;
+private int yInc;
+
+private int height, width;
+private int radius;
+Color randColour;
+
+
+MainC master;
 	
-	public Ball(int xt, int yt, int h, int w){
+	public Ball(int xt, int yt, MainC c){
+		Random rand = new Random();
+		master = c;
+		
 		x = xt;
 		y= yt;
-		coOrdinates = new Vector();
-		yinc = 1;
-		xinc = 1;
-		height = h;
-		width = w;
+		t = new Thread( this );        
+		t.start();
 		
+		width = master.getWidth();
+		height = master.getHeight();
+		radius = (rand.nextInt(40)+10);
+		
+		yInc = (rand.nextInt(6)-3);
+		xInc = (rand.nextInt(6)-3);
+		
+		
+		float r = rand.nextFloat();
+		float g = rand.nextFloat();
+		float b = rand.nextFloat();
+		
+		randColour = new Color(r, g, b);
+		
+		if (xInc == 0){
+			xInc++;
+		}
+		
+		if (yInc == 0){
+			yInc++;
+		}
 	}
 	
 	
 	
 	public void update(){
-		x = x + xinc;
-		y = y + yinc;
-		getCoOrd();
+		x = x + xInc;
+		y = y + yInc;
+		
+		checkCollision();
+	}
+	
+	
+	public int getX(){
+		return x + radius;
+	}
+	
+	public int getY(){
+		return y + radius;
+	}
+	
+	public void setXInc(int xTemp){
+		xInc = xTemp;
+	}
+	
+	public void setYInc(int yTemp){
+		yInc = yTemp;
 		
 	}
 	
 	
-	public void collisionHandle(){
-		
-		System.out.println("Crash!");
-		lastE = (Point) coOrdinates.lastElement();
-		cs = coOrdinates.lastIndexOf(lastE);
-		System.out.println(cs);
-		point1 =  (Point) coOrdinates.elementAt(cs - 1);
-		point2 =  (Point) coOrdinates.elementAt(cs);		
-		
-		
-		
-		dx = (int) ((x2 = point2.getX()) - (x1 = point1.getX()));
-		dy = (int) ((y2 = point2.getY()) - (y1 = point1.getY()));
-		double wv = 0; //working value used for trig calc
-		
-		
-		if (dx > 0 && dy > 0){
-		// going right and up
-			wv = (dx / dy);
-			
-		}else if (dx > 0 && dy < 0){
-		//going right and down
-			wv = (dy / dx);
-			
-		}else if (dx < 0 && dy > 0){
-		//going left and up
-			wv = (dx / dy);
-			
-		}else if (dx < 0 && dy < 0){
-		//going left and down
-			wv = (dy / dx);
-			
-		}
-			
-		angle = Math.atan(wv);
-		System.out.println(angle);
-		
-		
-		
-		
-		//if (wall detection TODO)
-		
-		
-		
-		
-		
-		yinc = yinc * -1;
-		xinc = xinc * -1;
+	public void setX(int xTemp){
+		x = xTemp;
+	}
+	
+	public void setY(int yTemp){
+		y = yTemp;
 		
 	}
 	
-	public void getCoOrd(){
-		if (coOrdinates.size() >= 4){
-			coOrdinates.removeElementAt(0);
-		}
-		
-		coOrdinates.addElement(new Point(x,y));
-		for ( int j = 1; j < coOrdinates.size(); ++j ) {
-			Point a = (Point)(coOrdinates.elementAt(j));
-			System.out.println(a);
-		}
-	  }
+	
+	public int getXInc(){
+		return xInc;
+	}
+	
+	public int getYInc(){
+		return yInc;
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	
 	
 	public void draw(Graphics g){
+		boolean collision;
 		
-		g.drawOval(x, y, 20, 20);
-		collision = g.hitClip(x, y, 40, 40);
+		
+		g.setColor(randColour);
+		
+		g.fillOval(x, y, radius*2, radius*2);
+		collision = g.hitClip(x, y, height, width);
 		if (!collision){
-			collisionHandle();
+			this.setX(40);
+			this.setY(40);
 		}
 		
 		
+	}
+
+
+
+	public void run() {
+		
+		while(true){
+		
+		try {
+			//System.out.println("das shit");
+			Thread.sleep(150);
+			
+			if (this.getX()<=20){
+				Thread.sleep(500);
+				if (this.getX()<=20){
+					this.setX(this.getX() + (2 * radius + 20));
+					Thread.sleep(500);
+				}						
+			}else if (this.getX()>=width - 20){
+				Thread.sleep(500);
+				if (this.getX()>=width -20){
+					this.setX(this.getX() - (2 * radius + 20));
+					Thread.sleep(500);
+				}
+			}else if (this.getY()<=20){
+				Thread.sleep(500);
+					if (this.getY()<=20){
+					this.setY(this.getY() + (2 * radius + 20));
+					Thread.sleep(500);
+				}
+			}else if (this.getY()>=height - 20){
+				Thread.sleep(500);
+				if (this.getY()>=height -20){
+					
+					this.setY(this.getY() - (2 * radius + 20));
+					Thread.sleep(500);
+				}
+			}
+			
+			
+			
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		}
+		
+	}
+	
+	
+	
+	public void checkCollision(){	
+		
+		//System.out.println(height);
+			
+			if (getX() < 0 + radius){			//collided with left wall
+				setXInc(-(getXInc()));
+			}else if (getX() > width - radius ){	//collided with the right
+				setXInc(-(getXInc()));
+			}else if (getY() < 0 + radius){		//collided with top
+				setYInc(-(getYInc()));
+			}else if (getY()  > height - radius ){	//COLLIDED WITH BOTTOM
+				setYInc(-(getYInc()));
+			}
+					
+	}
+	
+	
+	public int getRadius(){
+		return radius;
 	}
 	
 	
 	
 	
 	
+		
+		
+		
+	
+
+}	
 	
 	
 	
@@ -138,4 +213,5 @@ Point lastE ;
 	
 	
 	
-}
+	
+
