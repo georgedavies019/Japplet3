@@ -3,123 +3,126 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Vector;
 import java.lang.Math;
+import java.util.Random;
 
-public class Ball {
+public class Ball implements Runnable{
 
 	
+private static final Object[] Vector = null;
 int cs;
-int x;
-int y;
-boolean collision;
-Vector coOrdinates;
-int xinc;
-int yinc;
-Point point1;
-Point point2;
-double angle;
-double x1;
-double x2;
-double y1;
-double y2;
-int dx;
-int dy;
-int height;
-int width;
-Point lastE ;
+protected int x;
+protected int y;
+Thread t;
+private int xInc;
+private int yInc;
+
+
+private int height, width;
+private int radius;
+
+
+
+MainC master;
 	
-	public Ball(int xt, int yt, int h, int w){
+	public Ball(int xt, int yt, MainC c){
+		Random rand = new Random();
+		master = c;
+		
 		x = xt;
 		y= yt;
-		coOrdinates = new Vector();
-		yinc = 1;
-		xinc = 1;
-		height = h;
-		width = w;
+		t = new Thread( this );        
+		t.start();
+		
+		width = master.getWidth();
+		height = master.getHeight();
+		radius = (rand.nextInt(30)+20);
+		
+		yInc = (rand.nextInt(6)-3);
+		xInc = (rand.nextInt(6)-3);
+		
+		
 		
 	}
 	
 	
 	
 	public void update(){
-		x = x + xinc;
-		y = y + yinc;
-		getCoOrd();
+		x = x + xInc;
+		y = y + yInc;
+		
+		checkCollision();
+	}
+	
+	
+	public int getX(){
+		return x;
+	}
+	
+	public int getY(){
+		return y;
+	}
+	
+	public void setXInc(int xTemp){
+		xInc = xTemp;
+	}
+	
+	public void setYInc(int yTemp){
+		yInc = yTemp;
 		
 	}
 	
 	
-	public void collisionHandle(){
-		
-		System.out.println("Crash!");
-		lastE = (Point) coOrdinates.lastElement();
-		cs = coOrdinates.lastIndexOf(lastE);
-		System.out.println(cs);
-		point1 =  (Point) coOrdinates.elementAt(cs - 1);
-		point2 =  (Point) coOrdinates.elementAt(cs);		
-		
-		
-		
-		dx = (int) ((x2 = point2.getX()) - (x1 = point1.getX()));
-		dy = (int) ((y2 = point2.getY()) - (y1 = point1.getY()));
-		double wv = 0; //working value used for trig calc
-		
-		
-		if (dx > 0 && dy > 0){
-		// going right and up
-			wv = (dx / dy);
-			
-		}else if (dx > 0 && dy < 0){
-		//going right and down
-			wv = (dy / dx);
-			
-		}else if (dx < 0 && dy > 0){
-		//going left and up
-			wv = (dx / dy);
-			
-		}else if (dx < 0 && dy < 0){
-		//going left and down
-			wv = (dy / dx);
-			
-		}
-			
-		angle = Math.atan(wv);
-		System.out.println(angle);
-		
-		
-		
-		
-		//if (wall detection TODO)
-		
-		
-		
-		
-		
-		yinc = yinc * -1;
-		xinc = xinc * -1;
+	public void setX(int xTemp){
+		x = xTemp;
+	}
+	
+	public void setY(int yTemp){
+		y = yTemp;
 		
 	}
 	
-	public void getCoOrd(){
-		if (coOrdinates.size() >= 4){
-			coOrdinates.removeElementAt(0);
-		}
-		
-		coOrdinates.addElement(new Point(x,y));
-		for ( int j = 1; j < coOrdinates.size(); ++j ) {
-			Point a = (Point)(coOrdinates.elementAt(j));
-			System.out.println(a);
-		}
-	  }
+	
+	public int getXInc(){
+		return xInc;
+	}
+	
+	public int getYInc(){
+		return yInc;
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	
 	
 	public void draw(Graphics g){
-		
-		g.drawOval(x, y, 20, 20);
-		collision = g.hitClip(x, y, 40, 40);
+		boolean collision;
+		g.drawOval(x, y, radius, radius);
+		collision = g.hitClip(x, y, height, width);
 		if (!collision){
-			collisionHandle();
+			this.setX(0);
+			this.setY(0);
+		}
+		
+		
+	}
+
+
+
+	public void run() {
+		
+		
+		
+		try {
+			
+			Thread.sleep(500);
+			
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 		
 		
@@ -127,6 +130,58 @@ Point lastE ;
 	
 	
 	
+	public void checkCollision(){	
+		
+		
+			
+			if (getX() < 0){			//collided with left wall
+				setXInc(-(getXInc()));
+			}else if (getX() > width - radius){	//collided with the right
+				setXInc(-(getXInc()));
+			}else if (getY() < 0){		//collided with top
+				setYInc(-(getYInc()));
+			}else if (getY() > height - radius){	//COLLIDED WITH BOTTOM
+				setYInc(-(getYInc()));
+			}
+					
+	}
+	
+	
+	public int getRadius(){
+		return radius;
+	}
+	
+	
+	
+	
+	public void ballBounce(Ball k){
+		//int yTemp;
+		//int xTemp;
+		
+		
+		
+		/*int psi =(int) (180 - (this.getAngle()+k.getAngle())/2);
+		
+		double cartesian = Math.pow(x, 2) + Math.pow(y, 2);
+		yTemp = (int) (Math.sin(psi)*Math.sqrt(cartesian));
+		xTemp = (int) Math.sqrt(cartesian - Math.pow(y , 2));
+		y = (yTemp - yInc);
+		xInc = (xTemp - xInc);
+		
+		*/
+		
+		k.setXInc(-k.getXInc());
+		k.setXInc(-k.getXInc());
+		
+		
+		this.setXInc(-this.getXInc());
+		this.setYInc(-this.getYInc());
+		
+		
+		
+	}
+
+}	
 	
 	
 	
@@ -137,5 +192,4 @@ Point lastE ;
 	
 	
 	
-	
-}
+
