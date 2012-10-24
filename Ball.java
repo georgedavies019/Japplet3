@@ -131,42 +131,43 @@ MainC master;
 		
 		while(true){
 		
-		try {
-			//System.out.println("das shit");
-			Thread.sleep(150);
+			try {
+				//System.out.println("das shit");
+				Thread.sleep(150);
 			
-			if (this.getX()<=20){
-				Thread.sleep(500);
 				if (this.getX()<=20){
-					this.setX(this.getX() + (2 * radius + 20));
 					Thread.sleep(500);
-				}						
-			}else if (this.getX()>=width - 20){
-				Thread.sleep(500);
-				if (this.getX()>=width -20){
-					this.setX(this.getX() - (2 * radius + 20));
+					if (this.getX()<=20){
+						this.setX(this.getX() + (2 * radius + 20));
+						Thread.sleep(500);
+					}						
+				}else if (this.getX()>=width - 20){
 					Thread.sleep(500);
-				}
-			}else if (this.getY()<=20){
-				Thread.sleep(500);
+					if (this.getX()>=width -20){
+						this.setX(this.getX() - (2 * radius + 20));
+						Thread.sleep(500);
+					}
+				}else if (this.getY()<=20){
+					Thread.sleep(500);
 					if (this.getY()<=20){
-					this.setY(this.getY() + (2 * radius + 20));
+						this.setY(this.getY() + (2 * radius + 20));
+						Thread.sleep(500);
+					}
+				}else if (this.getY()>=height - 20){
 					Thread.sleep(500);
-				}
-			}else if (this.getY()>=height - 20){
-				Thread.sleep(500);
-				if (this.getY()>=height -20){
+					if (this.getY()>=height -20){
 					
-					this.setY(this.getY() - (2 * radius + 20));
-					Thread.sleep(500);
+						this.setY(this.getY() - (2 * radius + 20));
+						Thread.sleep(500);
+					}
 				}
+			
+			
+			
+			}catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			
-			
-			
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		
 		}
 		
 	}
@@ -195,12 +196,7 @@ MainC master;
 	}
 	
 	
-	
-	
-	
-		
-		
-		
+
 	
 
 }	
