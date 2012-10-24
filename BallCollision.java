@@ -32,6 +32,7 @@ MainC master;
 								
 				{
 				
+									
 					int bTemp = master.getBallArray(i).getXInc();
 					int cTemp =	master.getBallArray(i).getYInc();
 					
@@ -40,7 +41,9 @@ MainC master;
 					master.getBallArray(k).setXInc(bTemp);
 					master.getBallArray(k).setYInc(cTemp);
 					
-										
+					
+					
+					
 				}
 				else{
 					//System.out.println("lulz cant catch me!");
@@ -70,13 +73,19 @@ MainC master;
 	
 			return true;
 
-}	
+		}	
 		
 		
 		}
 		
 		System.out.println(" no collide");
 		return false;
+	}
+
+	
+	public void run() {
+		
+		
 	}	
 }
 
