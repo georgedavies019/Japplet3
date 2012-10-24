@@ -85,7 +85,7 @@ public class MainC extends Applet implements Runnable,MouseListener, KeyListener
 		ballCollision.ballCheck();
 	}
    
-	public void update (Graphics g){
+	public void update(Graphics g){
 		paint(g);
 	}
    
@@ -166,30 +166,46 @@ public class MainC extends Applet implements Runnable,MouseListener, KeyListener
 	public void keyTyped( KeyEvent e ) {
 	      char c = e.getKeyChar();
 	      if ( c == 'r' ) {
-	    	  if (!adminMode){
+	    	  {
 	    		  refresh++;
 	    		  System.out.println(refresh);
-	    	  }else if(adminMode){
-	    		  if (max < 100){
-	    			  max++;
-	    			  System.out.println("max balls:" + max);
-	    		  }
+	    	  
 	    	  }
+	    		  
+	    			  
+	    			  
+	    		  
+	    	  
 	      }else if  ( c == 'e' ) {
 	    	  if (refresh != 0){
 	    		  if (!adminMode){
-	    			  refresh--;
-	    			  System.out.println(refresh);
-	    		  }else if (adminMode){
-	    			  if (max > 1){
-	    				  max--;
-	    				  System.out.println("max balls:" + max);
-	    			  
+	    			  if(refresh >1){
+	    				  refresh--;
+	    				  System.out.println(refresh);
 	    			  }
+	    			  
+	    		  }else if(adminMode){
+	    			  refresh--;
+    				  System.out.println(refresh);
 	    		  }
-	    	  }
-	    }
-	}
+	    	  }  
+	 	  }else if (c== 't'){
+	 		  if (adminMode){
+	 			  if (max > 1){
+	 				max--;
+	 				System.out.println("max balls:" + max);
+	 			}
+	 		 }
+	 	  }else if (c == 'y'){
+	 		  if (adminMode){
+	 			 if (max < 100){
+	 				 max++;
+	 				 System.out.println("max balls:" + max);
+	 			 }
+	 		  }
+	 	  }
+	 }
+	
 	
 	
 	
