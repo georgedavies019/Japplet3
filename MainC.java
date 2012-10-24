@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 
+
 public class MainC extends Applet implements Runnable,MouseListener, KeyListener {
 
    /**
@@ -13,6 +14,7 @@ public class MainC extends Applet implements Runnable,MouseListener, KeyListener
 	int width, height;
   
 	Image buffer;
+	Graphics bufferG;
 	int refresh = 10;
 	Thread t = null;
 	private int ballCount = 0;
@@ -20,16 +22,18 @@ public class MainC extends Applet implements Runnable,MouseListener, KeyListener
 	public Ball[] balls = new Ball[100];
 	Ball ball1;
 	BallCollision ballCollision;
+	
 	private boolean adminMode = false;
 	
 
 	public void init() {
 		width = 900;
 		height = 900;
-		max = (height*width/36000);
+		max = (height*width/30000);
 		setSize(height, width);
 		ballCollision = new BallCollision(this);
 		buffer = createImage(width, height);
+		bufferG = buffer.getGraphics();
 		setBackground( Color.black );
 		addMouseListener( this );
 		addKeyListener(this);
@@ -74,31 +78,33 @@ public class MainC extends Applet implements Runnable,MouseListener, KeyListener
 
    
 	public void update(){
+		
 		for(int i = 0; i < ballCount; i++){
 			balls[i].update();
 		}
 		ballCollision.ballCheck();
 	}
    
-	public void updateG (Graphics g){
-		g.drawImage(buffer, 0, 0, null);
-		g.dispose();
+	public void update (Graphics g){
+		paint(g);
 	}
    
 	public void paint( Graphics g ) {
-		Graphics bg = buffer.getGraphics();
+
+		bufferG.clearRect(0,0,width,height); 
 	    //draw backgound
-		bg.setColor(Color.red);
-		bg.fillRect(0, 0, getWidth(), getHeight());
+		bufferG.setColor(Color.black);
+		bufferG.fillRect(0, 0, getWidth(), getHeight());
 	    //draw border
-		bg.setColor( Color.green );
-		bg.drawRect(2, 2, width - 3, height - 3);
-		bg.setClip(0, 0, width, height);
+		bufferG.setColor( Color.green );
+		bufferG.drawRect(2, 2, width - 3, height - 3);
+		bufferG.setClip(0, 0, width, height);
 		for(int i = 0; i < ballCount; i++){
-			balls[i].draw(bg);
+			balls[i].draw(bufferG);
 		}
  	   
-		updateG(g);
+		g.drawImage(buffer, 0, 0, this);
+		g.dispose();
 		
 	
 	}
